@@ -1,0 +1,37 @@
+{
+  "name": "TaxiPassenger",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node node_modules/react-native/local-cli/cli.js start",
+    "test": "jest"
+  },
+  "dependencies": {
+    "native-base": "^2.12.1",
+    "prop-types": "^15.7.2",
+    "react": "16.8.3",
+    "react-addons-update": "^15.6.2",
+    "react-native": "0.59.8",
+    "react-native-gesture-handler": "^1.2.1",
+    "react-native-maps": "^0.24.2",
+    "react-native-router-flux": "^3.39.1",
+    "react-native-screens": "^1.0.0-alpha.22",
+    "react-navigation": "^3.11.0",
+    "react-redux": "^7.0.3",
+    "redux": "^4.0.1",
+    "redux-thunk": "^2.3.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.4.4",
+    "@babel/runtime": "^7.4.4",
+    "babel-jest": "^24.8.0",
+    "jest": "^24.8.0",
+    "metro-react-native-babel-preset": "^0.54.1",
+    "path": "^0.12.7",
+    "react-test-renderer": "16.8.3",
+    "redux-logger": "^3.0.6"
+  },
+  "jest": {
+    "preset": "react-native"
+  }
+}
