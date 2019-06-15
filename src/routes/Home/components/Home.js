@@ -13,7 +13,7 @@ class Home extends React.Component{
 
 		return(
 			<View style={styles.container}>
-    		<MapView
+			<MapView
 					provider={PROVIDER_GOOGLE} // remove if not using Google Maps
 					style={styles.map}
 					region={{
@@ -23,8 +23,8 @@ class Home extends React.Component{
 						longitudeDelta: 0.0121,
 					}}
 				>
-    		</MapView>
-  </View>
+			</MapView>
+	</View>
 			)
 	};
 }
