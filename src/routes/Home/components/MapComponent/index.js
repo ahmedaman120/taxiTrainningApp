@@ -1,7 +1,10 @@
+/* jshint ignore:start */
 import React, { Component } from 'react';
 import { View } from 'native-base';
 import MapView,{PROVIDER_GOOGLE} from 'react-native-maps';
 import styles from './MapContainerStyle';
+import SearchBox from '../SearchBox';
+
 export default class MapCont extends Component {
     
     render() {
@@ -18,7 +21,7 @@ export default class MapCont extends Component {
                 	pinColor="green"
                 	/>
                 </MapView>
-
+				<SearchBox />
             </View>
         )
     }

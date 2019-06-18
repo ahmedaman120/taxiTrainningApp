@@ -2,7 +2,6 @@
 import React from 'react';
 import MapCont from './MapComponent';
 import {Container} from 'native-base';
-
 class Home extends React.Component{
 		componentDidMount(){
 		this.props.getCurrLocation();
@@ -27,10 +26,10 @@ class Home extends React.Component{
 				);
 	};
 }
-//{this.props.region.latitude && 				}
 
 export default  Home;
 /*
+//{this.props.region.latitude && 				}
 <View style={styles.container}>			 
 <Text>Hello {this.props.name} </Text>
 </View>
