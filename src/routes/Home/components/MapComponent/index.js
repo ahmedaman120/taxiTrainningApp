@@ -13,7 +13,12 @@ export default class MapCont extends Component {
 					style={styles.map}
 					region={region}
 				>
+				<MapView.Marker
+                	coordinate={region}
+                	pinColor="green"
+                	/>
                 </MapView>
+
             </View>
         )
     }

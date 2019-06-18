@@ -5,24 +5,29 @@ import {Container} from 'native-base';
 
 class Home extends React.Component{
 		componentDidMount(){
-		this.props.setName();
+		this.props.getCurrLocation();
 	}
-		
+		//27.18096, 31.18368
 	render(){
+		console.log(this.props.region);
+
 		const region ={
-			latitude: 37.78825,
-			longitude: -122.4324,
-			latitudeDelta: 0.015,
-			longitudeDelta: 0.0121,
+			latitude: 3.146642,
+			longitude: 101.695845,
+			latitudeDelta: 0.0922,
+			longitudeDelta: 0.0421,
 		}
 	
 		return(
 				<Container>
-					<MapCont region={region} />
+				{this.props.region.latitude && 
+					<MapCont region={this.props.region} />
+				}
 				</Container>
 				);
 	};
 }
+//{this.props.region.latitude && 				}
 
 export default  Home;
 /*

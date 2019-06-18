@@ -1,3 +1,3 @@
 export default {
-	SET_NAME:"SET_NAME"
+	GET_CURR_LOCATION:"GET_CURR_LOCATION"
 };

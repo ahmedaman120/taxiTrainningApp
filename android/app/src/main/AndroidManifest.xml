@@ -2,7 +2,7 @@
   package="com.taxi">
 
     <uses-permission android:name="android.permission.INTERNET" />
-
+     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <application
       android:name=".MainApplication"
       android:label="@string/app_name"
@@ -24,6 +24,7 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCcMfQAoXEn-AR5v91zlcW7JO4k5pU81_M"/>
+
     </application>
 
 </manifest>
