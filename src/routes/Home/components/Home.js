@@ -20,7 +20,13 @@ class Home extends React.Component{
 		return(
 				<Container>
 				{this.props.region.latitude && 
-					<MapCont region={this.props.region} />
+					<MapCont 	region={this.props.region} 
+								getInput={this.props.getInput}
+								changeBetweenBeAndWill={this.props.changeBetweenBeAndWill}
+								resultTypes={this.props.resultTypes}
+								predictions={this.props.predictions}
+								InputData={this.props.InputData}
+								/>
 				}
 				</Container>
 				);
@@ -33,4 +39,6 @@ export default  Home;
 <View style={styles.container}>			 
 <Text>Hello {this.props.name} </Text>
 </View>
+getPlacesFromGoogle={this.props.getPlacesFromGoogle}
+
 */
