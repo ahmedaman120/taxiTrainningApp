@@ -25,6 +25,7 @@ class Home extends React.Component{
 								changeBetweenBeAndWill={this.props.changeBetweenBeAndWill}
 								resultTypes={this.props.resultTypes}
 								predictions={this.props.predictions}
+								getPlacesFromGoogle={this.props.getPlacesFromGoogle}
 								InputData={this.props.InputData}
 								/>
 				}

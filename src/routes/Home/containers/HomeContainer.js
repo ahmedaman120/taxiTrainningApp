@@ -3,7 +3,8 @@ import Home from '../components/Home';
 import {
 	getCurrLocation,
 	getInput,
-	changeBetweenBeAndWill} from '../modules/homeAct';
+	changeBetweenBeAndWill,
+getPlacesFromGoogle} from '../modules/homeAct';
 
 const mapStateToProps = (state) =>({
 	region:state.home.region,
@@ -15,7 +16,8 @@ const mapStateToProps = (state) =>({
 const mapActionCreators = {
 	getCurrLocation,
 	getInput,
-	changeBetweenBeAndWill
+	changeBetweenBeAndWill,
+	getPlacesFromGoogle
 };
 
 export default connect(mapStateToProps,mapActionCreators)(Home);

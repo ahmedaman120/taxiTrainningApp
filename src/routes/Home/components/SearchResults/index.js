@@ -13,18 +13,19 @@ class SearchResults extends React.Component{
         predictions:[],
         error:""
     };
-    getPlacesFromGoogle=()=>{
-        RNGooglePlaces.
-            getAutocompletePredictions(this.props.resultTypes.be ? this.props.InputData.be  : this.props.InputData.will,{country:"EG"})
-            .then((results) => this.setState({ predictions: results }))
-            .catch((error) => this.setState({ error: error.message }));
-        };
+        // getPlacesFromGoogle=()=>{
+        //     RNGooglePlaces.
+        //         getAutocompletePredictions(this.props.resultTypes.be ? this.props.InputData.be  : this.props.InputData.will,{country:"EG"})
+        //         .then((results) => this.setState({ predictions: results }))
+        //         .catch((error) => this.setState({ error: error.message }));
+        //     };
+        // {this.getPlacesFromGoogle()}
 	render(){
 		return(
             <View style={styles.searchResWrapper}>
-            {this.getPlacesFromGoogle()}
+            
                     <List
-                        dataArray={this.state.predictions}
+                        dataArray={this.props.predictions}
                         renderRow={(item)=>
                             <View>
                                 <ListItem button avatar>

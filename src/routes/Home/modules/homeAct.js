@@ -32,7 +32,7 @@ export function getCurrLocation(){
 		},
 		(error)=>console.log(error)
 		,
-		{enableHighAccuracy:true,timeout:20000,maximumAge:1000}
+		{ enableHighAccuracy: false, timeout: 5000, maximumAge: 10000 }
 		);
 	}
 }
@@ -56,18 +56,18 @@ export function changeBetweenBeAndWill(payload){
 
 
 //GET PERIDICTION  PLACES FORM GOOGLE PLACES ACTION 
-// export function getPlacesFromGoogle(){
-// 	return(dispatch, store)=>{
-// 		let userInput = store().home.resultTypes.be ? store().home.InputData.be  : store().home.InputData.will ;
-// 		RNGooglePlaces
-// 			.getAutocompletePredictions(userInput,{country:"MY"})
-// 			.then((results)=>dispatch({
-// 				type:GET_PLACES_FROM_GOOGLE,
-// 				payload:results
-// 			}))
-// 			.catch((err)=>console.log(err));
-// 	}
-// }
+export function getPlacesFromGoogle(){
+	return(dispatch, store)=>{
+		let userInput = store().home.resultTypes.be ? store().home.InputData.be  : store().home.InputData.will ;
+		RNGooglePlaces
+			.getAutocompletePredictions(userInput,{country:"MY"})
+			.then((results)=>dispatch({
+				type:GET_PLACES_FROM_GOOGLE,
+				payload:results
+			}))
+			.catch((err)=>{console.log(err);console.log(store().home.InputData.be  )});
+	}
+}
 
 //---------------------------
 //-----------Handlers--------
@@ -120,18 +120,19 @@ function handleChangeBetweenBeAndWill(state,action){
 }
 
 
-// function handleGetPlacesFromGoogle(state,action){
-// 	return update(state,{
-// 		predictions:{
-// 			$set:action.payload
-// 		}
-// 	})
-// }
+function handleGetPlacesFromGoogle(state,action){
+	return update(state,{
+		predictions:{
+			$set:action.payload
+		}
+	})
+}
 
 const ACTION_HANDLERS = {
 	GET_CURR_LOCATION:handleGetCurrLocation,
 	GET_INPUT:handleGetInput,
-	CHANGE_BETWEEN_BE_AND_WILL:handleChangeBetweenBeAndWill
+	CHANGE_BETWEEN_BE_AND_WILL:handleChangeBetweenBeAndWill,
+	GET_PLACES_FROM_GOOGLE:handleGetPlacesFromGoogle
 };
 const initialState = {
 	region:{},

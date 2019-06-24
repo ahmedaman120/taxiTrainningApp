@@ -10,6 +10,7 @@ class SearchBox extends React.Component{
             key,
             value:val
         });
+        this.props.getPlacesFromGoogle();
     };
 	render(){
 		return(
