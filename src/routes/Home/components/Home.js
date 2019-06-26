@@ -2,14 +2,20 @@
 import React from 'react';
 import MapCont from './MapComponent';
 import {Container} from 'native-base';
+import {View, Text} from "react-native";
+import HeaderComponent from "../../../components/HeaderComponent";
+import FooterComponent from "../../../components/FooterComponent";
+import logo from '../../../assets/taxi_logo_white.png';
+
+
 class Home extends React.Component{
+	
 		componentDidMount(){
 		this.props.getCurrLocation();
 	}
 		//27.18096, 31.18368
 	render(){
 		console.log(this.props.region);
-
 		const region ={
 			latitude: 3.146642,
 			longitude: 101.695845,
@@ -19,7 +25,11 @@ class Home extends React.Component{
 	
 		return(
 				<Container>
+				
+					<HeaderComponent logo={logo} /> 
+
 				{this.props.region.latitude && 
+					
 					<MapCont 	region={this.props.region} 
 								getInput={this.props.getInput}
 								changeBetweenBeAndWill={this.props.changeBetweenBeAndWill}
@@ -28,7 +38,10 @@ class Home extends React.Component{
 								getPlacesFromGoogle={this.props.getPlacesFromGoogle}
 								InputData={this.props.InputData}
 								/>
+
+					
 				}
+				<FooterComponent/>
 				</Container>
 				);
 	};

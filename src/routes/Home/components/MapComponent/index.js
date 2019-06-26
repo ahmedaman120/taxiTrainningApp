@@ -1,15 +1,18 @@
 /* jshint ignore:start */
 import React, { Component } from 'react';
-import { View } from 'native-base';
+import { Container } from 'native-base';
 import MapView,{PROVIDER_GOOGLE} from 'react-native-maps';
 import styles from './MapContainerStyle';
 import SearchBox from '../SearchBox';
 import SearchResults from '../SearchResults';
-import axios from 'axios';
+import {View} from 'react-native';
+ // const { width, height } = Dimensions.get('window');
 
+// import axios from 'axios';
 export default class MapCont extends Component {
     state={
-    	x: this.props.region
+    	x: this.props.region,
+    	 isMapReady: false
     }
     shouldComponentUpdate(nextProps, nextState) {
     	// this.getAddress(nextState.x);
@@ -22,17 +25,28 @@ export default class MapCont extends Component {
     	// console.log(`https://www.latlong.net/c/?lat=${nextState.x.latitude}&long=${nextState.x.longitude}`)
     	return true;
     }
+    onMapLayout = () => {
+    this.setState({ isMapReady: true });
+  }
 
     render() {
+    	// const { width, height } = Dimensions.get('window');
+
         const region = this.props.region;
         console.log(this.state.x);
         return (
+
+          
             <View style={styles.container}>
+
                 <MapView
 					provider={PROVIDER_GOOGLE} // remove if not using Google Maps
 					style={styles.map}
 					region={region}
+					onMapReady={this.onMapLayout}
 				>
+				{ this.state.isMapReady &&
+				<View>
 				<MapView.Marker
                 	coordinate={region}
                 	pinColor="green"
@@ -42,6 +56,8 @@ export default class MapCont extends Component {
 					    onDragEnd={(e) => this.setState({ x: e.nativeEvent.coordinate })}
 					  	pinColor="red"
 					  />
+					  </View>
+					}
                 </MapView>
 				<SearchBox 
 					getInput={this.props.getInput}
