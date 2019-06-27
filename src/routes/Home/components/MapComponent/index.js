@@ -12,7 +12,7 @@ import {View} from 'react-native';
 export default class MapCont extends Component {
     state={
     	x: this.props.region,
-    	 isMapReady: false
+    	isMapReady: false
     }
     shouldComponentUpdate(nextProps, nextState) {
     	// this.getAddress(nextState.x);
@@ -21,13 +21,13 @@ export default class MapCont extends Component {
         .then((response) => response.json())
         .then((responseJson) => {
             console.log('ADDRESS GEOCODE is BACK!! => ' + JSON.stringify(responseJson));
-})
+		})
     	// console.log(`https://www.latlong.net/c/?lat=${nextState.x.latitude}&long=${nextState.x.longitude}`)
-    	return true;
+    return true;
     }
     onMapLayout = () => {
     this.setState({ isMapReady: true });
-  }
+}
 
     render() {
     	// const { width, height } = Dimensions.get('window');
@@ -36,7 +36,7 @@ export default class MapCont extends Component {
         console.log(this.state.x);
         return (
 
-          
+        
             <View style={styles.container}>
 
                 <MapView
@@ -51,18 +51,21 @@ export default class MapCont extends Component {
                 	coordinate={region}
                 	pinColor="green"
                 	/>
-                	<MapView.Marker draggable
-					    coordinate={this.state.x}
-					    onDragEnd={(e) => this.setState({ x: e.nativeEvent.coordinate })}
-					  	pinColor="red"
-					  />
-					  </View>
+                <MapView.Marker draggable
+					coordinate={this.state.x}
+					onDragEnd={(e) => this.setState({ x: e.nativeEvent.coordinate })}
+					pinColor="red"
+					/>
+					</View>
 					}
                 </MapView>
 				<SearchBox 
 					getInput={this.props.getInput}
 					changeBetweenBeAndWill={this.props.changeBetweenBeAndWill}
 					getPlacesFromGoogle={this.props.getPlacesFromGoogle}
+					getSelectedAddress={this.props.getSelectedAddress}
+					selectedAddress={this.props.selectedAddress}
+					resultTypes={this.props.resultTypes} 
 					/>
 				{ (this.props.resultTypes.be || this.props.resultTypes.will) &&
 				<SearchResults  
@@ -70,6 +73,7 @@ export default class MapCont extends Component {
 					resultTypes={this.props.resultTypes} 
 					InputData={this.props.InputData}
 					getPlacesFromGoogle={this.props.getPlacesFromGoogle}
+					getSelectedAddress={this.props.getSelectedAddress}
 					/>
 				}
             </View>

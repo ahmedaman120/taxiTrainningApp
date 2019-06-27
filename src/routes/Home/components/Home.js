@@ -37,6 +37,8 @@ class Home extends React.Component{
 								predictions={this.props.predictions}
 								getPlacesFromGoogle={this.props.getPlacesFromGoogle}
 								InputData={this.props.InputData}
+								getSelectedAddress={this.props.getSelectedAddress}
+								selectedAddress={this.props.selectedAddress}
 								/>
 
 					

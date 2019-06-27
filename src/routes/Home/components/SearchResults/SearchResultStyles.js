@@ -22,7 +22,7 @@ const styles={
         alignItems:"flex-start",
         backgroundColor:"#7D7D7D"
     },
-    leftIcon:{
+    rightIcon:{
         fontSize:20,
         color:"#7D7D7D"
     },

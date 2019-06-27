@@ -2,6 +2,7 @@ import update from 'react-addons-update';
 import constants  from './ActConst';
 import { Dimensions } from "react-native";	
 import RNGooglePlaces  from 'react-native-google-places';
+import { formatTestResults } from '@jest/test-result';
 //---------------------------
 //-----------constants-------
 //---------------------------
@@ -9,7 +10,10 @@ const {
 	GET_CURR_LOCATION, 
 	GET_INPUT,
 	CHANGE_BETWEEN_BE_AND_WILL,
-	GET_PLACES_FROM_GOOGLE
+	GET_PLACES_FROM_GOOGLE,
+	GET_SELECTED_ADDRESS,
+	GET_DISTANCE,
+	GET_FARE
 	} = constants;
 
 
@@ -60,7 +64,7 @@ export function getPlacesFromGoogle(){
 	return(dispatch, store)=>{
 		let userInput = store().home.resultTypes.be ? store().home.InputData.be  : store().home.InputData.will ;
 		RNGooglePlaces
-			.getAutocompletePredictions(userInput,{country:"MY"})
+			.getAutocompletePredictions(userInput,{country:"EG"})
 			.then((results)=>dispatch({
 				type:GET_PLACES_FROM_GOOGLE,
 				payload:results
@@ -68,6 +72,61 @@ export function getPlacesFromGoogle(){
 			.catch((err)=>{console.log(err);console.log(store().home.InputData.be  )});
 	}
 }
+
+
+//GET SELECTED ADDRESS 
+export function getSelectedAddress(payload){
+	return(dispatch,store)=>{
+		RNGooglePlaces.lookUpPlaceByID(payload)
+			.then((results)=>{
+				dispatch({
+					type:GET_SELECTED_ADDRESS,
+					payload:results
+				});
+			})
+			.then(()=>{
+				//get distance between two places
+				if(store().home.selectedAddress.will && store().home.selectedAddress.be){
+					let latBe =store().home.selectedAddress.be.location.latitude+","+store().home.selectedAddress.be.location.longitude;
+					let latWill =store().home.selectedAddress.will.location.latitude+","+store().home.selectedAddress.will.location.longitude;
+					let url = "https://maps.googleapis.com/maps/api/distancematrix/json";
+					let params = {
+						origins:latBe,
+						destinations:latWill,
+						mode:"driving",
+						key:"AIzaSyDUYbTR-3PDWPhgxjENs4yf35g2eHc641s"
+					};
+					// Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
+					console.log(">>>>>>>>>>>>>>",url+`?origins=${latBe}&destinations=${latWill}&mode=${params.mode}&key=${params.key}`);
+					fetch(url+`?origins=${latBe}&destinations=${latWill}&mode=${params.mode}&key=${params.key}`)
+						.then((result)=>result.json())		
+						.then((result)=>{
+								console.log(result);
+								dispatch({
+									type:GET_DISTANCE,
+									payload:result.rows[0].elements
+								});
+								return result.rows[0].elements;
+						})
+						.then((distanceObj)=>{
+							let fare = distanceObj[0].distance.value * 0.005;
+							let timeCost = distanceObj[0].duration.value;
+							let returnObj = {
+								fare:fare ,
+								timeCost:timeCost
+							};
+							dispatch ({
+								type:GET_FARE,
+								payload:returnObj
+							});
+						});
+				}
+			})
+			.catch((err)=>{console.log(err);});
+	}
+}
+
+
 
 //---------------------------
 //-----------Handlers--------
@@ -128,17 +187,55 @@ function handleGetPlacesFromGoogle(state,action){
 	})
 }
 
+function handleGetSelectedAddress(state,action){
+	let Title= state.resultTypes.be ? "be" : "will";
+	return update(state,{
+		selectedAddress:{
+			[Title]:{
+				$set:action.payload
+			}
+		},
+		resultTypes:{
+			will:{$set:false},
+			be:{$set:false}
+		}
+	});
+}
+
+function handleGetDistance(state, action){
+	return update(state,{
+		distance:{
+			$set:action.payload
+		}
+	})
+}
+
+function handleGetFare(state, action){
+	return update(state,{
+		fare:{
+			$set:action.payload
+		}
+	})
+}
+
+
 const ACTION_HANDLERS = {
 	GET_CURR_LOCATION:handleGetCurrLocation,
 	GET_INPUT:handleGetInput,
 	CHANGE_BETWEEN_BE_AND_WILL:handleChangeBetweenBeAndWill,
-	GET_PLACES_FROM_GOOGLE:handleGetPlacesFromGoogle
+	GET_PLACES_FROM_GOOGLE:handleGetPlacesFromGoogle,
+	GET_SELECTED_ADDRESS:handleGetSelectedAddress,
+	GET_DISTANCE:handleGetDistance,
+	GET_FARE:handleGetFare
 };
 const initialState = {
 	region:{},
 	InputData:{},
 	resultTypes:{},
-	predictions:{}
+	predictions:{},
+	selectedAddress:{},
+	distance:{},
+	fare:{}
 };
 
 export function homeReducer(state = initialState,action){
