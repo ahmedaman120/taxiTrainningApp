@@ -6,7 +6,7 @@ import {View, Text} from "react-native";
 import HeaderComponent from "../../../components/HeaderComponent";
 import FooterComponent from "../../../components/FooterComponent";
 import logo from '../../../assets/taxi_logo_white.png';
-
+import Fare from './Fare';
 
 class Home extends React.Component{
 	
@@ -42,6 +42,10 @@ class Home extends React.Component{
 								/>
 
 					
+				}
+				{
+					this.props.fare &&
+					<Fare fare={this.props.fare.fare} />
 				}
 				<FooterComponent/>
 				</Container>
