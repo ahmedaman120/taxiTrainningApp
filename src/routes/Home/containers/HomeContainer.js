@@ -5,7 +5,8 @@ import {
 	getInput,
 	changeBetweenBeAndWill,
 	getPlacesFromGoogle,
-	getSelectedAddress} from '../modules/homeAct';
+	getSelectedAddress,
+	bookingRequest} from '../modules/homeAct';
 
 const mapStateToProps = (state) =>({
 	region:state.home.region,
@@ -14,7 +15,8 @@ const mapStateToProps = (state) =>({
 	predictions :state.home.predictions || [],
 	selectedAddress:state.home.selectedAddress || {},
 	distance:state.home.distance || {},
-	fare:state.home.fare || {}
+	fare:state.home.fare || {},
+	book:state.home.book || {},
 });
 
 const mapActionCreators = {
@@ -22,7 +24,8 @@ const mapActionCreators = {
 	getInput,
 	changeBetweenBeAndWill,
 	getPlacesFromGoogle,
-	getSelectedAddress
+	getSelectedAddress,
+	bookingRequest
 };
 
 export default connect(mapStateToProps,mapActionCreators)(Home);

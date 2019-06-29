@@ -2,7 +2,9 @@ import update from 'react-addons-update';
 import constants  from './ActConst';
 import { Dimensions } from "react-native";	
 import RNGooglePlaces  from 'react-native-google-places';
+// import {axios} from 'axios;'
 import { formatTestResults } from '@jest/test-result';
+import Axios from 'axios';
 //---------------------------
 //-----------constants-------
 //---------------------------
@@ -13,7 +15,8 @@ const {
 	GET_PLACES_FROM_GOOGLE,
 	GET_SELECTED_ADDRESS,
 	GET_DISTANCE,
-	GET_FARE
+	GET_FARE,
+	BOOKING_REQUEST
 	} = constants;
 
 
@@ -126,6 +129,38 @@ export function getSelectedAddress(payload){
 	}
 }
 
+//booking request
+export function bookingRequest(){
+	return(dispatch,store)=>{
+		const payload ={
+			data : {
+				userName:'ahmed',
+				be:{
+					address:store().home.selectedAddress.be.address,
+					name:store().home.selectedAddress.be.name,
+					latitude:store().home.selectedAddress.be.location.latitude,
+					longitude:store().home.selectedAddress.be.location.longitude
+				},
+				will:{
+					address:store().home.selectedAddress.will.address,
+					name:store().home.selectedAddress.will.name,
+					latitude:store().home.selectedAddress.will.location.latitude,
+					longitude:store().home.selectedAddress.will.location.longitude
+				},
+				fare:store().home.fare,
+				status:"pending"
+			}
+		};
+		Axios
+			.post('http://192.168.1.7:4000/api/bookings',payload)
+			.then((err,res)=>{
+				dispatch({
+					type:BOOKING_REQUEST,
+					payload:res.body
+				})
+			});
+	}
+}
 
 
 //---------------------------
@@ -217,7 +252,13 @@ function handleGetFare(state, action){
 		}
 	})
 }
-
+function handleBookingRequest(state, action){
+	return update(state,{
+		book:{
+			$set:action.payload
+		}
+	})
+}
 
 const ACTION_HANDLERS = {
 	GET_CURR_LOCATION:handleGetCurrLocation,
@@ -226,7 +267,8 @@ const ACTION_HANDLERS = {
 	GET_PLACES_FROM_GOOGLE:handleGetPlacesFromGoogle,
 	GET_SELECTED_ADDRESS:handleGetSelectedAddress,
 	GET_DISTANCE:handleGetDistance,
-	GET_FARE:handleGetFare
+	GET_FARE:handleGetFare,
+	BOOKING_REQUEST:handleBookingRequest
 };
 const initialState = {
 	region:{},
@@ -235,7 +277,8 @@ const initialState = {
 	predictions:{},
 	selectedAddress:{},
 	distance:{},
-	fare:{}
+	fare:{},
+	book:{}
 };
 
 export function homeReducer(state = initialState,action){

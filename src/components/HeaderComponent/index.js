@@ -9,7 +9,7 @@ export default class HeaderComponent extends Component {
     render() {
        return (
          <Container>
-                <Header style={{backgroundColor:"#FF5E3A",zIndex: 2}}  >
+                <Header style={{backgroundColor:"#4c4cff",zIndex: 2}}  >
                 <Left>
                 <Button transparent>
                     <Icon name="bars" style={styles.icon} />
