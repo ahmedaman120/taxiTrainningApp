@@ -39,23 +39,35 @@ export default class MapCont extends Component {
         
             <View style={styles.container}>
 
-                <MapView
-					provider={PROVIDER_GOOGLE} // remove if not using Google Maps
+                <MapView	
 					style={styles.map}
-					region={region}
+					initialRegion={region}
 					onMapReady={this.onMapLayout}
 				>
 				{ this.state.isMapReady &&
 				<View>
-				<MapView.Marker
-                	coordinate={region}
-                	pinColor="green"
-                	/>
-                <MapView.Marker draggable
-					coordinate={this.state.x}
-					onDragEnd={(e) => this.setState({ x: e.nativeEvent.coordinate })}
+				{this.props.selectedAddress.will &&
+					<MapView.Marker
+                	coordinate={this.props.selectedAddress.will.location}
+					pinColor="green"
+                />}
+
+		{this.props.selectedAddress.be &&
+					<MapView.Marker
+                	coordinate={this.props.selectedAddress.be.location}
 					pinColor="red"
-					/>
+                />}
+
+		{	this.props.readyDriver && 
+		 Array.from(this.props.readyDriver).map((marker, index)=>
+						<MapView.Marker
+							key={index}
+							coordinate={{latitude:marker.coordinate[1], longitude:marker.coordinate[0] }}
+							image={require('../../../../assets/taxi.png')}
+						/>	
+					)
+				}
+				
 					</View>
 					}
                 </MapView>
@@ -81,7 +93,13 @@ export default class MapCont extends Component {
     }
 }
 
-/**{
+/**
+ * 
+ * <MapView.Marker
+                	coordinate={region}
+                	pinColor="green"
+                />
+ * {
 						latitude: 37.78825,
 						longitude: -122.4324,
 						latitudeDelta: 0.015,

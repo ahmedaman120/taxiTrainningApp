@@ -5,6 +5,7 @@ import RNGooglePlaces  from 'react-native-google-places';
 // import {axios} from 'axios;'
 import { formatTestResults } from '@jest/test-result';
 import Axios from 'axios';
+import {url,urlgoogle} from "./env";
 //---------------------------
 //-----------constants-------
 //---------------------------
@@ -16,7 +17,8 @@ const {
 	GET_SELECTED_ADDRESS,
 	GET_DISTANCE,
 	GET_FARE,
-	BOOKING_REQUEST
+	BOOKING_REQUEST,
+	GET_NEARBY_DRIVER
 	} = constants;
 
 
@@ -92,7 +94,6 @@ export function getSelectedAddress(payload){
 				if(store().home.selectedAddress.will && store().home.selectedAddress.be){
 					let latBe =store().home.selectedAddress.be.location.latitude+","+store().home.selectedAddress.be.location.longitude;
 					let latWill =store().home.selectedAddress.will.location.latitude+","+store().home.selectedAddress.will.location.longitude;
-					let url = "https://maps.googleapis.com/maps/api/distancematrix/json";
 					let params = {
 						origins:latBe,
 						destinations:latWill,
@@ -101,7 +102,7 @@ export function getSelectedAddress(payload){
 					};
 					// Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
 					console.log(">>>>>>>>>>>>>>",url+`?origins=${latBe}&destinations=${latWill}&mode=${params.mode}&key=${params.key}`);
-					fetch(url+`?origins=${latBe}&destinations=${latWill}&mode=${params.mode}&key=${params.key}`)
+					fetch(urlgoogle+`?origins=${latBe}&destinations=${latWill}&mode=${params.mode}&key=${params.key}`)
 						.then((result)=>result.json())		
 						.then((result)=>{
 								console.log(result);
@@ -152,7 +153,7 @@ export function bookingRequest(){
 			}
 		};
 		Axios
-			.post('http://192.168.1.7:4000/api/bookings',payload)
+			.post(`${url}/bookings`,payload)
 			.then((err,res)=>{
 				dispatch({
 					type:BOOKING_REQUEST,
@@ -160,6 +161,20 @@ export function bookingRequest(){
 				})
 			});
 	}
+}
+//GET NEARBY drivers
+
+export function getNearbyDriver(){
+	return(dispatch,store)=>{
+		fetch(`${url}/driverLocation?latitude=${store().home.region.latitude}&longitude=${store().home.region.longitude}`)
+			.then((result)=>result.json())
+			.then((result)=>{
+				dispatch({
+					type:GET_NEARBY_DRIVER,
+					payload:result
+				});
+			});	
+	};
 }
 
 
@@ -260,6 +275,14 @@ function handleBookingRequest(state, action){
 	})
 }
 
+function handleGetNearbyDriver(state,action){
+	return update(state,{
+		readyDriver:{
+			$set:action.payload
+		}
+	});
+}
+
 const ACTION_HANDLERS = {
 	GET_CURR_LOCATION:handleGetCurrLocation,
 	GET_INPUT:handleGetInput,
@@ -268,7 +291,8 @@ const ACTION_HANDLERS = {
 	GET_SELECTED_ADDRESS:handleGetSelectedAddress,
 	GET_DISTANCE:handleGetDistance,
 	GET_FARE:handleGetFare,
-	BOOKING_REQUEST:handleBookingRequest
+	BOOKING_REQUEST:handleBookingRequest,
+	GET_NEARBY_DRIVER:handleGetNearbyDriver
 };
 const initialState = {
 	region:{},
@@ -278,7 +302,8 @@ const initialState = {
 	selectedAddress:{},
 	distance:{},
 	fare:{},
-	book:{}
+	book:{},
+	readyDriver:{}
 };
 
 export function homeReducer(state = initialState,action){

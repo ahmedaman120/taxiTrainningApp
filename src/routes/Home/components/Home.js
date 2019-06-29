@@ -13,6 +13,9 @@ class Home extends React.Component{
 	
 		componentDidMount(){
 		this.props.getCurrLocation();
+		setTimeout(()=>{
+			this.props.getNearbyDriver();
+		},4000);
 	}
 		//27.18096, 31.18368
 	render(){
@@ -40,6 +43,7 @@ class Home extends React.Component{
 								InputData={this.props.InputData}
 								getSelectedAddress={this.props.getSelectedAddress}
 								selectedAddress={this.props.selectedAddress}
+								readyDriver={this.props.readyDriver}
 								/>
 
 					
