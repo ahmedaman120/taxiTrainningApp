@@ -10,6 +10,7 @@ import com.facebook.soloader.SoLoader;
 import com.airbnb.android.react.maps.MapsPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.arttitude360.reactnative.rngoogleplaces.RNGooglePlacesPackage;
+import com.react.rnspinkit.RNSpinkitPackage;
 
 
 import java.util.Arrays;
@@ -29,7 +30,8 @@ public class MainApplication extends Application implements ReactApplication {
           new MainReactPackage(),
               new MapsPackage() ,
               new VectorIconsPackage(),
-              new RNGooglePlacesPackage()
+              new RNGooglePlacesPackage(),
+              new RNSpinkitPackage()
       );
     }
 

@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Task List</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+        <style>
+            #map {
+                height: 100%;
+            }
+        </style>
+        
+    </head>
+
+    <body>
+        <h1>Driver Test</h1>
+
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-6">
+                    <form id="driverForm">
+                        <select class="form-control" id="bookingStatus">
+                            <option value="confirmed">Confirmed</option>
+                        </select>
+                        <br/>
+                        <input type="button" name="submit" value="Confirm" Booking” class="btn btn-danger">
+                    </form>
+                </div>
+                <div class="col-xs-6" id="show"></div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12" style="height: 100vh;">
+                <div id="map"></div>
+            </div>
+        </div>
+            <script
+            src="https://code.jquery.com/jquery-3.2.1.min.js"
+            integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+            crossorigin="anonymous"></script>
+            <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.js" type="text/javascript"></script>
+           
+
+            <script>
+                 // Note: This example requires that you consent to location sharing when
+      // prompted by your browser. If you see the error "The Geolocation service
+      // failed.", it means you probably did not give permission for the browser to
+      // locate you.
+      var map, infoWindow;
+ 
+      function initMap() {
+        var passenger , userbe ; 
+                    var socket= io();
+                    socket.on("connect",()=>{
+                        console.log(socket.id); 
+                        var driverLocation = {
+                            "socketId":socket.id,
+                            "locationId":"5d1768e9ffad1e66a9c9fd9a"
+                        };
+                        $.ajax(
+                            {
+                                type:"PUT",
+                                url:"/api/driverLocation/"+driverLocation.locationId,
+                                dataType:"json",
+                                data:driverLocation
+                            }
+                        ).done(function(response){
+                            if(response){
+                                // userbe=[response.be.longitude,response.be.latitude];
+                                userbe=response.coordinate;
+                                console.log(userbe);
+                            }else{
+                                console.log("Erorr");
+                            }
+                        });
+
+                    var driverRequestListen = socket.id + "driverRequest";
+                    socket.on(driverRequestListen, function(passengerData){
+                      
+                    if(passengerData){
+                        passenger = [passengerData.be.longitude,passengerData.be.latitude];
+                        
+                console.log("Passenger looking for a driver", passengerData);
+
+                    
+                //Update booking status to confirmed on btn click
+                $(".btn").click(function(e){
+                    //e.preventDefault();
+                
+                    var status = $("#bookingStatus").val();
+                    var dataToSend = {
+                        "driverId":"593a65fc734d1d141ca6557d",
+                        "id": passengerData._id,
+                        "status": status,
+                    };
+                    $.ajax({
+                        type: "PUT",
+                        url: "/api/bookings/" + passengerData._id,
+                        dataType: "json",
+                        data: dataToSend
+                    }).done(function( response ) {
+
+                        // Check for a successful (blank) response
+                        if (response !== "") {
+                            calculateRoute(userbe,passenger);
+                            console.log(response);
+			alert(response.be.address);
+alert(response.will.address);
+                        }
+                        else {
+                            console.log("Error: " + response);
+                        }
+                    });
+                });
+            }
+        });
+
+        socket.on("trackDriver", function(location){
+            var driverMovement = [];
+            var index = 0;
+            var interval = setInterval(function(){
+                var movementObj = driverMovement[index++];
+                if (index == driverMovement.length){
+                    clearInterval(interval);
+                    console.log(index)
+
+                }          
+                var driverCurrentLocation = {
+                    "locationId":location._id,
+                    "latitude": movementObj.lat,
+                    "longitude": movementObj.long
+                };
+                $.ajax({
+                    type: "PUT",
+                    url: "/api/driverLocation/" + location._id,
+                    dataType: "json",
+                    data: driverCurrentLocation
+                }).done(function( response ) {
+                    // Check for a successful (blank) response
+                    if (response !== "") {
+                        console.log(respose);   
+                    }
+                    else {
+                        console.log("Error: " + response);
+                    }
+                });
+            },5000);
+        });
+    });
+   
+	var directionDisplay = new google.maps.DirectionsRenderer();
+	var directionServices = new google.maps.DirectionsService();
+	var bundle  =new google.maps.LatLng(31.186704,27.179363);
+	var hat  =new google.maps.LatLng(27.198335,31.173685);
+        map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: -34.397, lng: 150.644},
+          zoom: 19
+        });
+        infoWindow = new google.maps.InfoWindow;
+	function calculateRoute(be,will){
+		var request = {
+			origin:be,
+			destination:will,
+			travelMode:"DRIVING"
+		};
+		directionServices.route(request , function(result,status){
+			console.log(result,status);
+			if(status="OK"){
+				console.log(status);
+				//directionDisplay.setDirections(result);
+				map.fitBounds(result.routes[0].bounds);
+                createPolyline(result);	
+                
+
+
+    var pointsArray = result.routes[0].overview_path;
+    var path = [];
+        var i = 0;
+            var j = 0;
+
+            //get long lat of vertices along route
+            for (j = 0; j < pointsArray.length; j++) {
+                lat = pointsArray[j].lat();
+                lng = pointsArray[j].lng();
+
+                //save lat long in path array
+                path.push({lat,long:lng});
+
+        
+     }   		
+			
+    console.log(path);
+
+
+		
+			}		
+		});
+	}
+	
+	function createPolyline(directionResult) {
+	
+  var line = new google.maps.Polyline({
+    path: directionResult.routes[0].overview_path,
+    strokeColor: '#FF0000',
+    strokeOpacity: 0.5,
+    strokeWeight: 4
+  });
+
+  line.setMap(map);
+
+  for (var i = 0; i < line.getPath().length; i++) {
+	//console.log(line.getPath().getAt(i));
+    var marker = new google.maps.Marker({
+      icon: {
+        path: google.maps.SymbolPath.CIRCLE,
+        scale: 3
+      },
+      position: line.getPath().getAt(i),
+      map: map
+    });
+  }
+}
+        // Try HTML5 geolocation.
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(function(position) {
+            var pos = {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude
+            };
+	    // calculateRoute(pos);
+            infoWindow.setPosition(pos);
+            infoWindow.setContent('Location found.');
+            infoWindow.open(map);
+            map.setCenter(pos);
+          }, function() {
+            handleLocationError(true, infoWindow, map.getCenter());
+          });
+        } else {
+          // Browser doesn't support Geolocation
+          handleLocationError(false, infoWindow, map.getCenter());
+        }
+      }
+
+      function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+        infoWindow.setPosition(pos);
+        infoWindow.setContent(browserHasGeolocation ?
+                              'Error: The Geolocation service failed.' :
+                              'Error: Your browser doesn\'t support geolocation.');
+        infoWindow.open(map);
+      } 
+
+
+
+
+              
+            </script>
+         <script async defer
+         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDUYbTR-3PDWPhgxjENs4yf35g2eHc641s&callback=initMap">
+         </script>
+    </body>
+</html>

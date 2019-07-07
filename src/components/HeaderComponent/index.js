@@ -15,8 +15,13 @@ export default class HeaderComponent extends Component {
                     <Icon name="bars" style={styles.icon} />
                 </Button>
             </Left>
+
             <Body>
+            {this.props.logo && 
                 <Image resizeMode="contain" style={styles.logo} source={this.props.logo} />
+                ||
+                <Text style={styles.headerText}>Driver on the way</Text>
+            }
             </Body>
             <Right>
                 <Button transparent>

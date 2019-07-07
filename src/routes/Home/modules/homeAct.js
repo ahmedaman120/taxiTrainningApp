@@ -18,7 +18,8 @@ const {
 	GET_DISTANCE,
 	GET_FARE,
 	BOOKING_REQUEST,
-	GET_NEARBY_DRIVER
+	GET_NEARBY_DRIVER,
+	BOOKING_CONF
 	} = constants;
 
 
@@ -133,6 +134,8 @@ export function getSelectedAddress(payload){
 //booking request
 export function bookingRequest(){
 	return(dispatch,store)=>{
+		const nearByDriver=store().home.readyDriver;
+		const randOne =Array.from(nearByDriver)[Math.floor(Math.random()*nearByDriver.length)];
 		const payload ={
 			data : {
 				userName:'ahmed',
@@ -150,16 +153,24 @@ export function bookingRequest(){
 				},
 				fare:store().home.fare,
 				status:"pending"
+			},
+			nearByDriver:{
+				socketId:randOne.socketId,
+				driverId:randOne.driverId,
+				latitude:randOne.coordinate[1],
+				longitude:randOne.coordinate[0]
 			}
 		};
 		Axios
 			.post(`${url}/bookings`,payload)
-			.then((err,res)=>{
+			.then((res)=>{
+				
+				console.log(res);
 				dispatch({
 					type:BOOKING_REQUEST,
-					payload:res.body
+					payload:res.data
 				})
-			});
+			}).catch((err)=>{console.warn(err)});
 	}
 }
 //GET NEARBY drivers
@@ -283,6 +294,15 @@ function handleGetNearbyDriver(state,action){
 	});
 }
 
+
+function handleBookingConf(state,action){
+	return update(state,{
+		book:{
+			$set:action.payload
+		}
+	})
+}
+
 const ACTION_HANDLERS = {
 	GET_CURR_LOCATION:handleGetCurrLocation,
 	GET_INPUT:handleGetInput,
@@ -292,7 +312,8 @@ const ACTION_HANDLERS = {
 	GET_DISTANCE:handleGetDistance,
 	GET_FARE:handleGetFare,
 	BOOKING_REQUEST:handleBookingRequest,
-	GET_NEARBY_DRIVER:handleGetNearbyDriver
+	GET_NEARBY_DRIVER:handleGetNearbyDriver,
+	BOOKING_CONF : handleBookingConf
 };
 const initialState = {
 	region:{},
